@@ -4,12 +4,15 @@ import { LineSegmentsGeometry } from "three/addons/lines/LineSegmentsGeometry.js
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { getCoplanarFaceRegionLocalToRoot, type FaceRegion, type FaceTriangle } from "../utils/faceRegion";
+import { GENERATED_PHONG_MATERIAL_KEY } from "../utils/materials";
+
+type ColorMaterial = THREE.Material & { color?: THREE.Color };
 
 export type FaceSelectionOptions = {
   scene: THREE.Scene;
   faceObject: THREE.Mesh;
   objectGeometry: THREE.BufferGeometry;
-  faceMaterials: THREE.MeshBasicMaterial[];
+  faceMaterials: ColorMaterial[];
   faceBaseColor: number;
   faceHoverColor: number;
   canvas: HTMLCanvasElement;
@@ -654,13 +657,21 @@ export function setupFaceSelection(options: FaceSelectionOptions) {
     if (object === faceObject) {
       const material = faceMaterials[index];
       if (!material) return;
-      material.color.set(color);
+      material.color?.set(color);
     } else if ((object as THREE.Mesh).isMesh) {
       const mesh = object as THREE.Mesh;
-      if (mesh.material instanceof THREE.MeshBasicMaterial) {
-        mesh.material.color.set(color);
-      }
+      const material = mesh.material as THREE.Material | THREE.Material[];
+      const target = Array.isArray(material) ? material[index] ?? material[0] : material;
+      const colorMaterial = target as ColorMaterial | undefined;
+      colorMaterial?.color?.set(color);
     }
+  }
+
+  function usesGeneratedPhongMaterial(object: THREE.Object3D) {
+    if (!(object as any).isMesh) return false;
+    const material = (object as THREE.Mesh).material as THREE.Material | THREE.Material[];
+    const materials = Array.isArray(material) ? material : [material];
+    return materials.some((mat) => (mat.userData as any)?.[GENERATED_PHONG_MATERIAL_KEY] === true);
   }
 
   function updateSelectEffect() {
@@ -670,7 +681,7 @@ export function setupFaceSelection(options: FaceSelectionOptions) {
       setFaceColor(faceObject, index, faceBaseColor);
     }
     scene.traverse((obj) => {
-      if (obj !== faceObject && obj.userData.selectable && (obj as any).isMesh) {
+      if (obj !== faceObject && obj.userData.selectable && usesGeneratedPhongMaterial(obj)) {
         setFaceColor(obj, 0, faceBaseColor);
       }
     });

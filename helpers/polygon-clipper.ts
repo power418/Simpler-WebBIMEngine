@@ -2,6 +2,7 @@ import * as THREE from "three";
 import pc from "polygon-clipping";
 // import { fallbackMapIFC } from "@/components/custom/SceneCanvas/utils/objectFactory";
 import { disposeObjectDeep } from "../utils/threeHelpers";
+import { cloneAsPhongMaterial, createPhongMaterial } from "../utils/materials";
 import { mergeVertices } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 // --------------------------------------------------------
@@ -407,7 +408,7 @@ function buildFloorMeshFromRing(
     geom.translate(0, offsetY, 0);
   }
 
-  const mat = new THREE.MeshStandardMaterial({
+  const mat = createPhongMaterial({
     color: opts.fillColor ?? 0xffffff,
     transparent: false,
     opacity: 1,
@@ -489,7 +490,7 @@ function buildFloorMeshFromPoly(
     ? THREE.MathUtils.clamp(Number(opts.fillOpacity), 0, 1)
     : 1;
 
-  const mat = new THREE.MeshStandardMaterial({
+  const mat = createPhongMaterial({
     color: opts.fillColor ?? 0xffffff,
     transparent: opacity < 1,
     opacity,
@@ -837,7 +838,10 @@ function buildSurfaceMeshFromPoly(
   // ShapeGeometry default di bidang XY, kita mau XZ → rotateX(-90°)
   geom2d.rotateX(-Math.PI / 2);
 
-  const material = (template.material as THREE.Material).clone();
+  const sourceMaterial = template.material as THREE.Material | THREE.Material[];
+  const material = Array.isArray(sourceMaterial)
+    ? sourceMaterial.map((mat) => cloneAsPhongMaterial(mat))
+    : cloneAsPhongMaterial(sourceMaterial);
   const mesh = new THREE.Mesh(geom2d, material);
   mesh.position.set(0, planeY, 0);
 

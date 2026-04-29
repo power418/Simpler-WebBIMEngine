@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { BaseEntity } from './BaseEntity';
+import { createPhongMaterial } from '../utils/materials';
 
 export class CircleEntity extends BaseEntity {
   radius: number;
@@ -15,7 +16,7 @@ export class CircleEntity extends BaseEntity {
     const geometry = new THREE.ShapeGeometry(shape, segments);
     geometry.rotateX(-Math.PI / 2);
 
-    const material = new THREE.MeshStandardMaterial({
+    const material = createPhongMaterial({
       color: 0xcccccc,
       side: THREE.DoubleSide,
     });

@@ -26,6 +26,7 @@ import { SectionTool } from "../components/SectionPlaneMode";
 import { getCoplanarFaceRegionLocalToRoot, type FaceRegion, type FaceTriangle } from "../utils/faceRegion";
 import { GroupManager } from "../components/Group";
 import { SnapTool } from "../components/tools/SnapTool";
+import { createPhongMaterial } from "../utils/materials";
 
 type NavigationModeOption = "Orbit" | "Plan";
 
@@ -400,7 +401,7 @@ const createTestCube = (scene: THREE.Scene) => {
 	const faceHoverColor = 0xe6e6e6;
 	const faceMaterials = Array.from(
 		{ length: 6 },
-		() => new THREE.MeshBasicMaterial({ color: faceBaseColor })
+		() => createPhongMaterial({ color: faceBaseColor })
 	);
 	const cube = new THREE.Mesh(cubeGeometry, faceMaterials);
 	cube.userData.selectable = true;
@@ -501,18 +502,15 @@ const setupSelectionSystem = (
 			materials.forEach((material) => {
 				const mat = material as THREE.Material & { color?: THREE.Color };
 				if (!mat || !(mat as any).color) return;
-				const meshMaterial = mat as THREE.MeshBasicMaterial;
-				void meshMaterial;
-
 				// Selection highlight disabled as per user request
 				// if (selected) {
-				// 	if (meshMaterial.userData.__originalColor === undefined) {
-				// 		meshMaterial.userData.__originalColor = meshMaterial.color.getHex();
+				// 	if (mat.userData.__originalColor === undefined) {
+				// 		mat.userData.__originalColor = mat.color.getHex();
 				// 	}
-				// 	meshMaterial.color.copy(selectionColor);
-				// } else if (meshMaterial.userData.__originalColor !== undefined) {
-				// 	meshMaterial.color.setHex(meshMaterial.userData.__originalColor);
-				// 	delete meshMaterial.userData.__originalColor;
+				// 	mat.color.copy(selectionColor);
+				// } else if (mat.userData.__originalColor !== undefined) {
+				// 	mat.color.setHex(mat.userData.__originalColor);
+				// 	delete mat.userData.__originalColor;
 				// }
 				void selected; // Silence unused variable warning
 			});

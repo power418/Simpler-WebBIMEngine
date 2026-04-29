@@ -3,12 +3,13 @@ import { splitFloorsWithNewRect } from "../../helpers/polygon-clipper";
 import { IntersectionHelper } from "../../helpers/intersection-helper";
 import { IntersectionGuide } from "../../helpers/intersection-guide";
 import { SnappingHelper } from "../../helpers/snapping-helper";
+import { createPhongMaterial } from "../../utils/materials";
 
 const SURFACE_OFFSET = 0.001;
 // const OUTLINE_OFFSET = 0.0005; // Removed in favor of polygonOffset
 
 function makeSurfaceMaterial(color: number) {
-	return new THREE.MeshStandardMaterial({
+	return createPhongMaterial({
 		color,
 		transparent: false,
 		opacity: 1.0,

@@ -16,6 +16,7 @@ import {
   pickRegionFromPlaneRegions,
   type SplitRegion,
 } from "../helpers/pushPullCSG";
+import { ensurePhongMaterial } from "../utils/materials";
 
 const EXTRUDE_OUTLINE_VERSION = 3;
 const ENABLE_EXTRUDE_OUTLINES = true;
@@ -172,6 +173,10 @@ export class ExtrudeTool {
     const w = rect.width > 0 ? Math.round(rect.width * dpr) : 1;
     const h = rect.height > 0 ? Math.round(rect.height * dpr) : 1;
     this.hoverOverlay.borderMat.resolution.set(w, h);
+  }
+
+  private ensureMeshUsesPhongMaterial(mesh: THREE.Mesh) {
+    mesh.material = ensurePhongMaterial(mesh.material as THREE.Material | THREE.Material[]);
   }
 
   private updateHoverOverlayFromRegion(region: SplitRegion, hitNormalWorld: THREE.Vector3) {
@@ -1197,6 +1202,7 @@ export class ExtrudeTool {
     }
 
     const mesh = this.active.mesh;
+    this.ensureMeshUsesPhongMaterial(mesh);
     const previous = mesh.geometry;
     mesh.geometry = geometry;
     if (previous !== this.active.originalGeometry) previous.dispose(); // safe cleanup
@@ -1302,6 +1308,7 @@ export class ExtrudeTool {
       }
 
       state.mesh.userData = ud;
+      this.ensureMeshUsesPhongMaterial(state.mesh);
       if (ud.type === "surface") {
         this.removeFloorOutlines(state.mesh);
       }
@@ -1667,6 +1674,7 @@ export class ExtrudeTool {
 
   private updatePullGeometry(mesh: THREE.Mesh, depth: number, kind: string, state: any, hollow: boolean) {
     if (!this.active) return;
+    this.ensureMeshUsesPhongMaterial(mesh);
 
     // 1. Get Target Orientation (Local)
     // We want to align the extrusion direction (initially +Z in ExtrudeGeometry) to this.

@@ -97,10 +97,10 @@ export class BaseEntity {
                 const mat = (obj as THREE.Mesh).material as THREE.Material | THREE.Material[];
                 if (Array.isArray(mat)) {
                     mat.forEach((m) => {
-                        if ('emissive' in m) (m as THREE.MeshStandardMaterial).emissive.set(isSelected ? 0x3333ff : 0x000000);
+                        if ('emissive' in m) (m as THREE.MeshPhongMaterial).emissive.set(isSelected ? 0x3333ff : 0x000000);
                     });
                 } else if ('emissive' in mat) {
-                    (mat as THREE.MeshStandardMaterial).emissive.set(isSelected ? 0x3333ff : 0x000000);
+                    (mat as THREE.MeshPhongMaterial).emissive.set(isSelected ? 0x3333ff : 0x000000);
                 }
             }
         });

@@ -4,6 +4,7 @@ import * as WEBIFC from "web-ifc";
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { applyPhongMaterials } from "../utils/materials";
 
 const workerUrl = "/worker.mjs";
 
@@ -124,6 +125,8 @@ export class MeshLoader extends OBC.Component implements OBC.Disposable {
         if (options?.position) {
             object.position.copy(options.position);
         }
+
+        applyPhongMaterials(object);
 
         const defaultType = (object as any).isMesh ? "imported_mesh" : "imported_root";
 

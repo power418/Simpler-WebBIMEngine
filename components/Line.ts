@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { SnappingHelper, type SnapKind, type SnapResult } from "../helpers/snapping-helper";
 import { IntersectionHelper, type IntersectionResult } from "../helpers/intersection-helper";
 import { IntersectionGuide } from "../helpers/intersection-guide";
+import { createPhongMaterial } from "../utils/materials";
 
 type PickInfo = {
   point: THREE.Vector3;
@@ -559,7 +560,7 @@ export class LineTool {
     shape.closePath();
 
     const geometry = new THREE.ShapeGeometry(shape);
-    const material = new THREE.MeshBasicMaterial({
+    const material = createPhongMaterial({
       color: 0xcccccc,
       side: THREE.DoubleSide,
       polygonOffset: true,
@@ -1226,7 +1227,7 @@ export class LineTool {
         }
 
         const geometry = new THREE.ShapeGeometry(shape);
-        const material = new THREE.MeshBasicMaterial({
+        const material = createPhongMaterial({
           color: 0xcccccc,
           side: THREE.DoubleSide,
           polygonOffset: true,

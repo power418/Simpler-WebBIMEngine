@@ -8,6 +8,7 @@ import { importGlbOrGltf, exportGlb } from "./glb";
 import { IfcManager } from "./ifc";
 import { importObj, exportObj } from "./obj";
 import { markSelectableRoot } from "../Mesh";
+import { applyPhongMaterials } from "../../utils/materials";
 
 export type ImportObjectStats = {
   meshCount: number;
@@ -156,6 +157,7 @@ export class FileController {
         case "glb":
         case "gltf": {
           const object = await importGlbOrGltf(file);
+          applyPhongMaterials(object);
           markSelectableRoot(object, { entityType: "model" });
           root = object;
           stats = this.getImportObjectStats(root);
@@ -166,6 +168,7 @@ export class FileController {
         }
         case "obj": {
           const object = await importObj(file);
+          applyPhongMaterials(object);
           markSelectableRoot(object, { entityType: "model" });
           root = object;
           stats = this.getImportObjectStats(root);

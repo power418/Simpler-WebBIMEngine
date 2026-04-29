@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { BaseEntity } from './BaseEntity';
+import { createPhongMaterial } from '../utils/materials';
 
 export class RectangleEntity extends BaseEntity {
   width: number;
@@ -18,7 +19,7 @@ export class RectangleEntity extends BaseEntity {
     const geometry = new THREE.ShapeGeometry(shape);
     geometry.rotateX(-Math.PI / 2);
 
-    const material = new THREE.MeshBasicMaterial({
+    const material = createPhongMaterial({
       color: 0xcccccc,
       side: THREE.DoubleSide,
       // depthTest: true,
